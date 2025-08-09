@@ -1,1 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Super/Market</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: sans-serif;
+      background-color: #fff;
+    }
+    #intro {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 100px 32px;
+      border-radius: 12px;
+      z-index: 10;
+      min-width: 260px;
+      max-width: 90vw;
+    }
+    #instructions {
+      font-size: 16px;
+      color: #000;
+      text-align: center;
+    }
+    
+    a.webxr-ar-button {    
+      position: static !important;
+      font-size: 18px !important;
+      padding: 12px 32px !important;
+      background: #000 !important;
+      color: #fff !important;
+      border: none !important;
+      border-radius: 8px !important;
+      cursor: pointer !important;
+      margin-top: 200px !important;
+      text-decoration: none !important;
+      display: inline-block !important;
+    } 
+    
+    #ar-canvas {
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      top: 0;
+      left: 0;
+      display: none;
+      z-index: 1;
+      background: transparent;
+    }
+    /* Add this for all images to prevent stretching */
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
 
+  </style>
+</head>
+<body>
+  <div id="intro">
+    <div id="instructions">
+      <strong>Welcome to Sun AR</strong><br>
+      Point your phone at the centre of the room and click the Start AR button.<br>
+      The animation will appear in front of you.<br>
+    </div>
+    <!-- ARButton will be appended here by JS -->
+  </div>
+  <div id="ar-canvas"></div>
+  
+  <script type="module" src="js/script.js"></script>
+</body>
+</html> 
