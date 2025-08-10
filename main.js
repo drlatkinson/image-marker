@@ -1,58 +1,23 @@
-window.addEventListener('DOMContentLoaded', () => {
-  const intro = document.getElementById('intro');
-  const arCanvasContainer = document.getElementById('ar-canvas');
+document.getElementById('start-ar').addEventListener('click', async () => {
+  document.getElementById('start-ar').style.display = 'none';
 
-  // Create and append Start AR button
-  const startBtn = document.createElement('button');
-  startBtn.textContent = "Start AR";
-  startBtn.className = "ar-start-btn";
-  intro.appendChild(startBtn);
+  // Initialize MindAR only after user gesture
+  const mindarThree = new window.MINDAR.IMAGE.MindARThree({
+    container: document.getElementById('ar-container'),
+    imageTargetSrc: './targets.mind'
+  });
 
-  let mindarThree, renderer, scene, camera, anchor, plane;
+  const {renderer, scene, camera} = mindarThree;
 
-  startBtn.addEventListener('click', async () => {
-    intro.style.display = 'none';
-    arCanvasContainer.style.display = 'block';
+  // Simple AR overlay (an orange box)
+  const anchor = mindarThree.addAnchor(0);
+  const geometry = new THREE.PlaneGeometry(1, 1);
+  const material = new THREE.MeshBasicMaterial({color: 0xff9900, transparent:true, opacity:0.8});
+  const plane = new THREE.Mesh(geometry, material);
+  anchor.group.add(plane);
 
-    mindarThree = new window.MINDAR.IMAGE.MindARThree({
-      container: arCanvasContainer,
-      imageTargetSrc: './targets.mind',
-    });
-    renderer = mindarThree.renderer;
-    scene = mindarThree.scene;
-    camera = mindarThree.camera;
-
-    anchor = mindarThree.addAnchor(0);
-
-    // Load the overlay image as a texture
-    const loader = new window.THREE.TextureLoader();
-    loader.load('assets/gate.png', (texture) => {
-      const aspect = texture.image.width / texture.image.height;
-      const geometry = new window.THREE.PlaneGeometry(aspect, 1);
-      const material = new window.THREE.MeshBasicMaterial({ map: texture, transparent: true });
-      plane = new window.THREE.Mesh(geometry, material);
-      plane.position.set(0, 0, 0);
-
-      // Show overlay when marker found, hide when lost
-      anchor.onTargetFound = () => {
-        if (plane && !anchor.group.children.includes(plane)) {
-          anchor.group.add(plane);
-        }
-      };
-      anchor.onTargetLost = () => {
-        if (plane && anchor.group.children.includes(plane)) {
-          anchor.group.remove(plane);
-        }
-      };
-    });
-
-    // Start AR
-    await mindarThree.start();
-    // Animation/render loop
-    const run = () => {
-      renderer.render(scene, camera);
-      requestAnimationFrame(run);
-    };
-    run();
+  await mindarThree.start(); // <-- This line triggers the camera permission prompt!
+  renderer.setAnimationLoop(() => {
+    renderer.render(scene, camera);
   });
 });
