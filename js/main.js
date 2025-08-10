@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
   startBtn.className = "ar-start-btn";
   intro.appendChild(startBtn);
 
-  // AR setup
   let mindarThree, renderer, scene, camera, anchor, plane;
 
   startBtn.addEventListener('click', async () => {
