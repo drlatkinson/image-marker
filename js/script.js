@@ -1,153 +1,62 @@
+import "https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.module.js";
+import "https://cdn.jsdelivr.net/npm/mind-ar@1.2.7/dist/mindar-image-three.prod.js";
 
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.module.js';
-import { ARButton } from 'https://cdn.jsdelivr.net/npm/three@0.150.1/examples/jsm/webxr/ARButton.js';
-
-let camera, scene, renderer;
-let animationFrames = [];
-let plane = null;
-let frameIndex = 0;
-let animationStarted = false;
-let framesLoaded = 0;
-const TOTAL_FRAMES = 120;
-
-let staticPlane = null; // For static overlay image
-
+// DOM elements
 const intro = document.getElementById('intro');
 const arCanvasContainer = document.getElementById('ar-canvas');
 
-init();
+// Create and append Start AR button
+const startBtn = document.createElement('button');
+startBtn.textContent = "Start AR";
+startBtn.className = "ar-start-btn";
+intro.appendChild(startBtn);
 
-function init() {
-  scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+// Setup AR system (but don't start yet)
+let mindarThree, renderer, scene, camera, anchor, plane;
 
-  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.xr.enabled = true;
-  renderer.domElement.style.width = '100vw';
-  renderer.domElement.style.height = '100vh';
-  renderer.domElement.style.display = 'none';
-  arCanvasContainer.appendChild(renderer.domElement);
+startBtn.addEventListener('click', async () => {
+  // Hide intro, show AR canvas
+  intro.style.display = 'none';
+  arCanvasContainer.style.display = 'block';
 
-/*
-let mediaRecorder;
-let recordedChunks = [];
+  // Initialize MindAR
+  mindarThree = new window.MINDAR.IMAGE.MindARThree({
+    container: arCanvasContainer,
+    imageTargetSrc: './targets.mind', // Created from your marker
+  });
+  ({ renderer, scene, camera } = mindarThree);
 
-const recordBtn = document.getElementById('record-btn');
-const downloadLink = document.getElementById('download-link');
-const canvas = renderer.domElement;
+  // Prepare anchor for the first image target (your postcard marker)
+  anchor = mindarThree.addAnchor(0);
 
-recordBtn.addEventListener('click', function() {
-  if (mediaRecorder && mediaRecorder.state === "recording") {
-    // Stop recording
-    mediaRecorder.stop();
-    recordBtn.textContent = "Start Recording";
-  } else {
-    // Start recording
-    recordedChunks = [];
-    const stream = canvas.captureStream(30); // 30 FPS
-    mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
-    mediaRecorder.ondataavailable = function(e) {
-      if (e.data.size > 0) recordedChunks.push(e.data);
-    };
-    mediaRecorder.onstop = function() {
-      const blob = new Blob(recordedChunks, { type: 'video/webm' });
-      downloadLink.href = URL.createObjectURL(blob);
-      downloadLink.download = 'ar-experience.webm';
-      downloadLink.style.display = 'block';
-      downloadLink.textContent = 'Download Video';
-    };
-    mediaRecorder.start();
-    recordBtn.textContent = "Stop Recording";
-    downloadLink.style.display = 'none';
-  }
-}); 
-*/
-
-  // Texture loader instance for both animation and static overlay
+  // Load sun0060.png as overlay
   const loader = new THREE.TextureLoader();
-
-  // Load all animation frames
-  for (let i = 1; i <= TOTAL_FRAMES; i++) {
-    const frameNum = String(i).padStart(4, '0');
-    loader.load(`assets/sun${frameNum}.png`, texture => {
-      animationFrames[i - 1] = texture;
-      framesLoaded++;
-
-      // When the first frame loads, create the animated plane
-      if (!plane && texture.image && texture.image.width && texture.image.height) {
-        const aspect = texture.image.width / texture.image.height;
-        const geometry = new THREE.PlaneGeometry(aspect, 1);
-        const material = new THREE.MeshBasicMaterial({ transparent: true });
-        plane = new THREE.Mesh(geometry, material);
-        plane.position.set(0, 0, -3.5); // Farther from camera
-        camera.add(plane);
-        scene.add(camera);
-      }
-    });
-  }
-
-  // Load the static overlay image ONCE, and put closer to the camera than the animated plane
-  loader.load('assets/gate3.png', texture => {
-    if (texture.image && texture.image.width && texture.image.height) {
-      const aspect = texture.image.width / texture.image.height;
-      // Static overlay plane size, adjust as needed
-      const geometry = new THREE.PlaneGeometry(aspect * 1.2, 1.2);
-      const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
-      staticPlane = new THREE.Mesh(geometry, material);
-      staticPlane.position.set(0, 0, -3.3); // Closer to camera than the animation plane at -3.5
-      camera.add(staticPlane);
-      // No need to add to scene; parented to camera
-    }
+  loader.load('assets/sun0060.png', (texture) => {
+    const aspect = texture.image.width / texture.image.height;
+    const geometry = new THREE.PlaneGeometry(aspect, 1);
+    const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
+    plane = new THREE.Mesh(geometry, material);
+    plane.position.set(0, 0, 0); // Centered on marker
   });
 
-  // Create the ARButton and add it inside the intro splash
-  const arButton = ARButton.createButton(renderer, { requiredFeatures: ['hit-test'] });
-  arButton.textContent = "Start AR Experience";
-  intro.appendChild(arButton);
-
-  // Hide intro, show AR and start animation only when AR session starts
-  renderer.xr.addEventListener('sessionstart', () => {
-    intro.style.display = 'none';
-    renderer.domElement.style.display = 'block';
-    if (!animationStarted) {
-      animationStarted = true;
-      animate();
+  // Only show overlay plane when marker is detected
+  anchor.onTargetFound = () => {
+    if (plane && !anchor.group.children.includes(plane)) {
+      anchor.group.add(plane);
     }
-  });
-
-  // Optionally, if AR session ends, bring back the intro and hide animation
-  renderer.xr.addEventListener('sessionend', () => {
-    intro.style.display = 'flex';
-    renderer.domElement.style.display = 'none';
-    animationStarted = false;
-    renderer.setAnimationLoop(null);
-  });
-
-  // Handle window resize
-  window.addEventListener('resize', onWindowResize, false);
-}
-
-function onWindowResize() {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-}
-
-function animate() {
-  renderer.setAnimationLoop(() => {
-    if (
-      renderer.domElement.style.display !== 'none' &&
-      animationFrames.length === TOTAL_FRAMES &&
-      plane &&
-      plane.material
-    ) {
-      plane.material.map = animationFrames[frameIndex];
-      plane.material.needsUpdate = true;
-      frameIndex = (frameIndex + 1) % animationFrames.length;
+  };
+  anchor.onTargetLost = () => {
+    if (plane && anchor.group.children.includes(plane)) {
+      anchor.group.remove(plane);
     }
+  };
+
+  // Animation/render loop
+  const run = () => {
     renderer.render(scene, camera);
-  });
-}
+    requestAnimationFrame(run);
+  };
 
+  await mindarThree.start();
+  run();
+});
