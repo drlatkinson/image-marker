@@ -54,7 +54,16 @@
       z-index: 1;
       background: transparent;
     }
+    img, canvas {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      object-fit: contain;
+    }
   </style>
+  <!-- MindAR and Three.js scripts as global objects -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.7/dist/mindar-image-three.prod.js"></script>
 </head>
 <body>
   <div id="intro">
@@ -63,9 +72,9 @@
       Point your phone at the postcard image and click the Start AR button<br>
       to make the AR image appear.<br>
     </div>
-    <!-- The AR start button will be created and appended by script.js -->
+    <!-- The AR start button will be created and appended by main.js -->
   </div>
   <div id="ar-canvas"></div>
-  <script type="module" src="js/script.js"></script>
+  <script src="js/script.js"></script>
 </body>
 </html>
