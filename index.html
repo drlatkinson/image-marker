@@ -32,21 +32,18 @@
       color: #000;
       text-align: center;
     }
-    
-    a.webxr-ar-button {    
-      position: static !important;
-      font-size: 18px !important;
-      padding: 12px 32px !important;
-      background: #000 !important;
-      color: #fff !important;
-      border: none !important;
-      border-radius: 8px !important;
-      cursor: pointer !important;
-      margin-top: 200px !important;
-      text-decoration: none !important;
-      display: inline-block !important;
-    } 
-    
+    .ar-start-btn {
+      font-size: 18px;
+      padding: 12px 32px;
+      background: #000;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 48px;
+      text-decoration: none;
+      display: inline-block;
+    }
     #ar-canvas {
       position: absolute;
       width: 100vw;
@@ -57,26 +54,25 @@
       z-index: 1;
       background: transparent;
     }
-    /* Add this for all images to prevent stretching */
-    img {
+    img, canvas {
       max-width: 100%;
       height: auto;
       display: block;
+      /* Prevent stretching of overlays */
+      object-fit: contain;
     }
-
   </style>
 </head>
 <body>
   <div id="intro">
     <div id="instructions">
       <strong>Welcome to Sun AR</strong><br>
-      Point your phone at the centre of the room and click the Start AR button.<br>
-      The animation will appear in front of you.<br>
+      Point your phone at the postcard image and click the Start AR button<br>
+      to make the AR image appear.<br>
     </div>
-    <!-- ARButton will be appended here by JS -->
+    <!-- The AR start button will be created and appended by main.js -->
   </div>
   <div id="ar-canvas"></div>
-  
-  <script type="module" src="js/script.js"></script>
+  <script type="module" src="main.js"></script>
 </body>
-</html> 
+</html>
