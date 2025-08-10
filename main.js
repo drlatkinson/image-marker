@@ -26,7 +26,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Load the overlay image as a texture
     const loader = new window.THREE.TextureLoader();
-    loader.load('assets/sun0060.png', (texture) => {
+    loader.load('assets/gate.png', (texture) => {
       const aspect = texture.image.width / texture.image.height;
       const geometry = new window.THREE.PlaneGeometry(aspect, 1);
       const material = new window.THREE.MeshBasicMaterial({ map: texture, transparent: true });
