@@ -5,63 +5,68 @@
   <title>Super/Market</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      font-family: sans-serif;
-      background-color: #fff;
-    }
-    #intro {
-      position: absolute;
-      top: 50%;
-      left: 50%;
+    body { 
+      margin: 0; 
+      overflow: hidden; 
+      font-family: sans-serif; 
+      background: #fff; }
+    
+    #intro { 
+      position: absolute; 
+      top: 50%; 
+      left: 50%; 
       transform: translate(-50%, -50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
       justify-content: center;
-      background: rgba(255, 255, 255, 0.95);
-      padding: 100px 32px;
-      border-radius: 12px;
+      background: rgba(255,255,255,0.95); 
+      padding: 100px 32px; 
+      border-radius: 12px; 
       z-index: 10;
-      min-width: 260px;
-      max-width: 90vw;
+      min-width: 260px; 
+      max-width: 90vw; 
     }
-    #instructions {
-      font-size: 16px;
-      color: #000;
-      text-align: center;
+    
+    #instructions { 
+      font-size: 16px; 
+      color: #000; 
+      text-align: center; 
     }
-    .ar-start-btn {
-      font-size: 18px;
-      padding: 12px 32px;
-      background: #000;
-      color: #fff;
+    
+    .ar-start-btn { 
+      font-size: 18px; 
+      padding: 12px 32px; b
+        ackground: #000; 
+      color: #fff; 
       border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      margin-top: 48px;
-      text-decoration: none;
-      display: inline-block;
+      border-radius: 8px; 
+      cursor: pointer; 
+      margin-top: 48px; 
+      text-decoration: none; 
+      display: inline-block; 
     }
-    #ar-canvas {
-      position: absolute;
-      width: 100vw;
-      height: 100vh;
-      top: 0;
-      left: 0;
+    
+    #ar-canvas { 
+      position: absolute; 
+      width: 100vw; 
+      height: 100vh; 
+      top: 0; 
+      left: 0; 
       display: none;
-      z-index: 1;
-      background: transparent;
+      z-index: 1; 
+      background: transparent; 
     }
-    img, canvas {
-      max-width: 100%;
-      height: auto;
-      display: block;
-      object-fit: contain;
+    
+    img, canvas { 
+      max-width: 100%; 
+      height: auto; 
+      display: block; 
+      object-fit: contain; 
     }
   </style>
-  <!-- MindAR and Three.js scripts as global objects -->
+  
+  <!-- Three.js and MindAR as global scripts, not modules -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.7/dist/mindar-image-three.prod.js"></script>
 </head>
