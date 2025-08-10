@@ -1,7 +1,4 @@
-import "https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.module.js";
-import "https://cdn.jsdelivr.net/npm/mind-ar@1.2.7/dist/mindar-image-three.prod.js";
-
-document.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', () => {
   const intro = document.getElementById('intro');
   const arCanvasContainer = document.getElementById('ar-canvas');
 
@@ -21,36 +18,41 @@ document.addEventListener('DOMContentLoaded', () => {
       container: arCanvasContainer,
       imageTargetSrc: './targets.mind',
     });
-    ({ renderer, scene, camera } = mindarThree);
+    renderer = mindarThree.renderer;
+    scene = mindarThree.scene;
+    camera = mindarThree.camera;
 
     anchor = mindarThree.addAnchor(0);
 
-    const loader = new THREE.TextureLoader();
+    // Load the overlay image as a texture
+    const loader = new window.THREE.TextureLoader();
     loader.load('assets/sun0060.png', (texture) => {
       const aspect = texture.image.width / texture.image.height;
-      const geometry = new THREE.PlaneGeometry(aspect, 1);
-      const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
-      plane = new THREE.Mesh(geometry, material);
+      const geometry = new window.THREE.PlaneGeometry(aspect, 1);
+      const material = new window.THREE.MeshBasicMaterial({ map: texture, transparent: true });
+      plane = new window.THREE.Mesh(geometry, material);
       plane.position.set(0, 0, 0);
+
+      // Show overlay when marker found, hide when lost
+      anchor.onTargetFound = () => {
+        if (plane && !anchor.group.children.includes(plane)) {
+          anchor.group.add(plane);
+        }
+      };
+      anchor.onTargetLost = () => {
+        if (plane && anchor.group.children.includes(plane)) {
+          anchor.group.remove(plane);
+        }
+      };
     });
 
-    anchor.onTargetFound = () => {
-      if (plane && !anchor.group.children.includes(plane)) {
-        anchor.group.add(plane);
-      }
-    };
-    anchor.onTargetLost = () => {
-      if (plane && anchor.group.children.includes(plane)) {
-        anchor.group.remove(plane);
-      }
-    };
-
+    // Start AR
+    await mindarThree.start();
+    // Animation/render loop
     const run = () => {
       renderer.render(scene, camera);
       requestAnimationFrame(run);
     };
-
-    await mindarThree.start();
     run();
   });
 });
