@@ -2,84 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Super/Market</title>
+  <title>MindAR Camera Permission Fix Demo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body { 
-      margin: 0; 
-      overflow: hidden; 
-      font-family: sans-serif; 
-      background: #fff; }
-    
-    #intro { 
-      position: absolute; 
-      top: 50%; 
-      left: 50%; 
-      transform: translate(-50%, -50%);
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
-      justify-content: center;
-      background: rgba(255,255,255,0.95); 
-      padding: 100px 32px; 
-      border-radius: 12px; 
-      z-index: 10;
-      min-width: 260px; 
-      max-width: 90vw; 
-    }
-    
-    #instructions { 
-      font-size: 16px; 
-      color: #000; 
-      text-align: center; 
-    }
-    
-    .ar-start-btn { 
-      font-size: 18px; 
-      padding: 12px 32px; 
-      background: #000; 
-      color: #fff; 
-      border: none;
-      border-radius: 8px; 
-      cursor: pointer; 
-      margin-top: 48px; 
-      text-decoration: none; 
-      display: inline-block; 
-    }
-    
-    #ar-canvas { 
-      position: absolute; 
-      width: 100vw; 
-      height: 100vh; 
-      top: 0; 
-      left: 0; 
-      display: none;
-      z-index: 1; 
-      background: transparent; 
-    }
-    
-    img, canvas { 
-      max-width: 100%; 
-      height: auto; 
-      display: block; 
-      object-fit: contain; 
-    }
-  </style>
-  
-  <!-- Three.js and MindAR as global scripts, not modules -->
+  <!-- Use classic scripts, NOT type="module"! -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.150.1/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.7/dist/mindar-image-three.prod.js"></script>
+  <style>
+    body { margin:0; overflow:hidden; background:#222; color:#fff; font-family: sans-serif; }
+    #start-ar { 
+      position: absolute; left: 50%; top: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2rem; padding: 1em 2em; border: none; background: #ff6600; color: #fff;
+      border-radius: 8px; cursor: pointer; z-index: 10;
+    }
+    #ar-container { width: 100vw; height: 100vh; }
+  </style>
 </head>
 <body>
-  <div id="intro">
-    <div id="instructions">
-      <strong>Welcome to Gate AR</strong><br>
-      Point your phone at the postcard image and click the Start AR button<br>
-      to make the AR image appear.<br>
-    </div>
-    <!-- The AR start button will be created and appended by main.js -->
-  </div>
-  <div id="ar-canvas"></div>
+  <button id="start-ar">Start AR</button>
+  <div id="ar-container"></div>
   <script src="main.js"></script>
 </body>
 </html>
